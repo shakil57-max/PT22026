@@ -53,14 +53,14 @@ with gr.Blocks(title="Document Q&A") as demo:
     with gr.Row():
         with gr.Column():
             file_input = gr.File(label="Document", file_types=[".pdf", ".txt"], type="filepath")
-            chunk_size = gr.Slider(50, 300, value=120, step=10, label="Chunk size (words)")
-            overlap = gr.Slider(0, 100, value=30, step=5, label="Overlap (words)")
+            chunk_size = gr.Slider(20, 300, value=40, step=10, label="Chunk size (words)")
+            overlap = gr.Slider(0, 100, value=10, step=5, label="Overlap (words)")
             process_button = gr.Button("Process document")
             status = gr.Textbox(label="Status", interactive=False)
 
         with gr.Column():
             question = gr.Textbox(label="Your question", placeholder="Ask something about the document")
-            top_k = gr.Slider(1, 5, value=3, step=1, label="Chunks to search")
+            top_k = gr.Slider(1, 5, value=5, step=1, label="Chunks to search")
             ask_button = gr.Button("Get answer", variant="primary")
             answer = gr.Textbox(label="Answer", interactive=False)
             source = gr.Textbox(label="Source", interactive=False)

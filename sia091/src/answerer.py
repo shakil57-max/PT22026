@@ -9,7 +9,7 @@ DEFAULT_QA_MODEL = "distilbert/distilbert-base-cased-distilled-squad"
 class Answerer:
     # Extractive question answering: the answer is copied from the text
 
-    def __init__(self, model_name=DEFAULT_QA_MODEL, max_answer_tokens=15, scoring="logit"):
+    def __init__(self, model_name=DEFAULT_QA_MODEL, max_answer_tokens=15, scoring="logit", retrieval_weight=5.0):
         # scoring "prob" compares probabilities inside each chunk
         # scoring "logit" compares raw model scores, which is fairer across chunks
         if scoring not in ("prob", "logit"):
@@ -17,6 +17,8 @@ class Answerer:
         self.model_name = model_name
         self.max_answer_tokens = max_answer_tokens
         self.scoring = scoring
+        # retrieval_weight adds the retriever score to the logit when ranking chunks
+        self.retrieval_weight = retrieval_weight
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForQuestionAnswering.from_pretrained(model_name)
         self.model.eval()
@@ -29,11 +31,16 @@ class Answerer:
             raise ValueError("There are no chunks to answer from.")
 
         best = None
+        best_rank = None
         for chunk in chunks:
             found = self._answer_one(question, chunk["text"])
             if found is None:
                 continue
-            if best is None or found[self.scoring] > best[self.scoring]:
+            rank = found[self.scoring]
+            if self.scoring == "logit":
+                rank += self.retrieval_weight * chunk.get("score", 0.0)
+            if best is None or rank > best_rank:
+                best_rank = rank
                 best = dict(found)
                 best["page"] = chunk["page"]
                 best["context"] = chunk["text"]
