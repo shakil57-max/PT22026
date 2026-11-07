@@ -3,7 +3,7 @@
 import torch
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 
-DEFAULT_QA_MODEL = "distilbert/distilbert-base-cased-distilled-squad"
+DEFAULT_QA_MODEL = "deepset/roberta-base-squad2"
 
 
 class Answerer:
