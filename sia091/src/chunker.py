@@ -1,13 +1,11 @@
-"""Split document pages into overlapping chunks for retrieval."""
+# Split document pages into overlapping chunks for retrieval.
 
 
 def chunk_pages(pages, chunk_size=120, overlap=30):
-    """Turn (page_number, text) pairs into a list of chunk dictionaries.
-
-    chunk_size: number of words in each chunk.
-    overlap: number of words shared between neighbouring chunks,
-             so that an answer cut at a boundary is still found.
-    """
+    # Turn (page_number, text) pairs into a list of chunk dictionaries
+    # chunk_size: number of words in each chunk
+    # overlap: words shared between neighbouring chunks, so an answer
+    # that falls on a boundary is still found
     if chunk_size <= 0:
         raise ValueError("chunk_size must be greater than 0.")
     if overlap < 0 or overlap >= chunk_size:
@@ -26,6 +24,7 @@ def chunk_pages(pages, chunk_size=120, overlap=30):
                 "text": " ".join(piece),
                 "page": page_number,
             })
+            # Stop once this chunk already reaches the end of the page
             if start + chunk_size >= len(words):
                 break
 
