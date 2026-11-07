@@ -17,6 +17,8 @@ EVAL_SET = "eval/eval_set.json"
 RESULTS_FILE = "eval/results.csv"
 CHUNK_SIZES = (40, 60, 120)
 TOP_KS = (1, 3, 5)
+# Same weight as the default in src/answerer.py, so the table matches the app
+RETRIEVAL_WEIGHT = 5.0
 
 # Different rules for choosing one answer from the candidates of the top chunks
 STRATEGIES = {
@@ -24,6 +26,7 @@ STRATEGIES = {
     "qa_prob": lambda cands: max(cands, key=lambda c: c["prob"]),
     "qa_logit": lambda cands: max(cands, key=lambda c: c["logit"]),
     "retrieval_x_prob": lambda cands: max(cands, key=lambda c: c["retrieval"] * c["prob"]),
+    "logit_plus_retrieval": lambda cands: max(cands, key=lambda c: c["logit"] + RETRIEVAL_WEIGHT * c["retrieval"]),
 }
 
 
